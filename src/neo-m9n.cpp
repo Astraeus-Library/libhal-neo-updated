@@ -31,17 +31,11 @@ neo_m9n::neo_m9n(hal::serial& p_serial)
 {
 }
 
-result<neo_m9n> neo_m9n::create(hal::serial& p_serial)
-{
-  neo_m9n new_neo(p_serial);
-  return new_neo;
-}
-
-hal::result<neo_m9n::gps_parsed_t> neo_m9n::read_raw_gps()
+neo_m9n::gps_parsed_t neo_m9n::read_raw_gps()
 {
   using namespace std::literals;
 
-  auto bytes_read_array = HAL_CHECK(m_serial->read(m_gps_buffer)).data;
+  auto bytes_read_array = m_serial->read(m_gps_buffer).data;
   auto start_of_line_finder = hal::stream_find(hal::as_bytes(start_of_line));
   auto end_of_line_finder = hal::stream_find(hal::as_bytes(end_of_line));
 
@@ -70,10 +64,10 @@ hal::result<neo_m9n::gps_parsed_t> neo_m9n::read_raw_gps()
 
   m_gps_data.is_locked = (ret < 7) ? false : true;
 
-  return hal::result<neo_m9n::gps_parsed_t>(m_gps_data);
+  return neo_m9n::gps_parsed_t(m_gps_data);
 }
 
-hal::result<neo_m9n::gps_parsed_t> neo_m9n::calculate_lon_lat(
+neo_m9n::gps_parsed_t neo_m9n::calculate_lon_lat(
   const neo_m9n::gps_parsed_t& p_gps_data)
 {
 
@@ -101,14 +95,14 @@ hal::result<neo_m9n::gps_parsed_t> neo_m9n::calculate_lon_lat(
   modified_data.longitude = lon;
   modified_data.latitude = lat;
 
-  return hal::result<neo_m9n::gps_parsed_t>(modified_data);
+  return neo_m9n::gps_parsed_t(modified_data);
 }
 
-hal::result<neo_m9n::gps_parsed_t> neo_m9n::read()
+neo_m9n::gps_parsed_t neo_m9n::read()
 {
-  auto gps_data = HAL_CHECK(read_raw_gps());
-  auto lon_lat = HAL_CHECK(calculate_lon_lat(gps_data));
-  return hal::result<neo_m9n::gps_parsed_t>(lon_lat);
+  auto gps_data = read_raw_gps();
+  auto lon_lat = calculate_lon_lat(gps_data);
+  return neo_m9n::gps_parsed_t(lon_lat);
 }
 
 }  // namespace hal::neo

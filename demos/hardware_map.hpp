@@ -15,19 +15,22 @@
 #pragma once
 
 #include <libhal/functional.hpp>
+#include <libhal/i2c.hpp>
 #include <libhal/serial.hpp>
 #include <libhal/steady_clock.hpp>
 
-struct hardware_map
+namespace hal::neo {
+struct hardware_map_t
 {
   hal::serial* console;
   hal::serial* gps;
   hal::steady_clock* clock;
   hal::callback<void()> reset;
 };
+}  // namespace hal::neo
 
 // Application function must be implemented by one of the compilation units
 // (.cpp) files.
-hal::status application(hardware_map& p_map);
-hal::status initialize_processor();
-hal::result<hardware_map> initialize_platform();
+void application(hal::neo::hardware_map_t& p_map);
+void initialize_processor();
+hal::neo::hardware_map_t initialize_platform();

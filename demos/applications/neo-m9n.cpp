@@ -17,7 +17,7 @@
 #include <libhal-util/serial.hpp>
 #include <libhal-util/steady_clock.hpp>
 
-hal::status application(hardware_map& p_map)
+void application(hal::neo::hardware_map_t& p_map)
 {
   using namespace std::chrono_literals;
   using namespace hal::literals;
@@ -27,7 +27,7 @@ hal::status application(hardware_map& p_map)
   auto& gps = *p_map.gps;
 
   hal::print(console, "Initializing GPS...\n");
-  auto neoGPS = HAL_CHECK(hal::neo::neo_m9n::create(gps));
+  hal::neo::neo_m9n neoGPS(gps);
   hal::print(console, "GPS created! \n");
   hal::print(
     console,
@@ -35,7 +35,7 @@ hal::status application(hardware_map& p_map)
 
   while (true) {
     hal::delay(clock, 1000ms);
-    auto GPS = HAL_CHECK(neoGPS.read());
+    auto GPS = neoGPS.read();
     if (!GPS.is_locked) {
       hal::print(console,
                  "GPS not locked. Relocating for a better signal might help. "
@@ -47,7 +47,7 @@ hal::status application(hardware_map& p_map)
 
   while (true) {
     hal::delay(clock, 1000ms);
-    auto GPS = HAL_CHECK(neoGPS.read());
+    auto GPS = neoGPS.read();
     hal::print(
       console,
       "\n=================== GPS Coordinate Data ===================\n");
@@ -61,5 +61,4 @@ hal::status application(hardware_map& p_map)
                     GPS.altitude);
   }
 
-  return hal::success();
 }

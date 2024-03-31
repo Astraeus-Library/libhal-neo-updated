@@ -11,26 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 cmake_minimum_required(VERSION 3.15)
 
-project(libhal-neo VERSION 0.0.1 LANGUAGES CXX)
+project(libhal-neo LANGUAGES CXX)
 
-find_package(libhal REQUIRED CONFIG)
-find_package(libhal-util REQUIRED CONFIG)
+libhal_test_and_make_library(
+  LIBRARY_NAME libhal-neo
 
-add_library(libhal-neo src/neo-m9n.cpp)
+  SOURCES
+  src/neo-m9n.cpp
 
-target_include_directories(libhal-neo PUBLIC include)
-target_compile_features(libhal-neo PRIVATE cxx_std_20)
-target_compile_options(libhal-neo PRIVATE -Wall -Wextra)
-target_link_libraries(libhal-neo PRIVATE
-  libhal::libhal
-  libhal::util
+  TEST_SOURCES
+  tests/neo-m9n.test.cpp
+  tests/main.test.cpp
 )
-
-if(NOT BUILD_TESTING STREQUAL OFF)
-  add_subdirectory(tests)
-endif()
-
-install(TARGETS libhal-neo)

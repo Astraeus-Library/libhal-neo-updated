@@ -46,13 +46,12 @@ public:
     char dgps_station_id_checksum[10];
   };
 
-  [[nodiscard]] static result<neo_m9n> create(hal::serial& p_serial);
-  hal::result<gps_parsed_t> read_raw_gps();
-  hal::result<gps_parsed_t> calculate_lon_lat(const gps_parsed_t& p_gps_data);
-  hal::result<gps_parsed_t> read();
+  explicit neo_m9n(hal::serial& p_serial);
+  gps_parsed_t read_raw_gps();
+  gps_parsed_t calculate_lon_lat(const gps_parsed_t& p_gps_data);
+  gps_parsed_t read();
 
 private:
-  neo_m9n(hal::serial& p_serial);
   hal::serial* m_serial;
   std::array<hal::byte, 512> m_gps_buffer;
   gps_parsed_t m_gps_data;
